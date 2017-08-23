@@ -80,10 +80,12 @@ type futureVal struct {
 //the value is set by using Resolve, Reject and Cancel methods of related Promise
 type Future struct {
 	Id    int //Id can be used as identity of Future
+	// 标识该future是否完成
 	final chan struct{}
 	//val point to futureVal that stores status of future
 	//if need to change the status of future, must copy a new futureVal and modify it,
 	//then use CAS to put the pointer of new futureVal
+	// unsafe.Pointer --> *futureVal --> *PromiseResult
 	val unsafe.Pointer
 }
 
@@ -94,8 +96,9 @@ func (this *Future) Canceller() Canceller {
 
 //IsCancelled returns true if the promise is cancelled, otherwise false
 func (this *Future) IsCancelled() bool {
+	// 获取当前Future的val => *futureVal
 	val := this.loadVal()
-
+	// 判断是否真的取消条件:
 	if val != nil && val.r != nil && val.r.Typ == RESULT_CANCELLED {
 		return true
 	} else {
@@ -105,14 +108,16 @@ func (this *Future) IsCancelled() bool {
 
 //SetTimeout sets the future task will be cancelled
 //if future is not complete before time out
+// 设置超时时间，如在future超时时间内未完成就被取消执行，单位为毫秒,如设置<=0,就设置为10ns
 func (this *Future) SetTimeout(mm int) *Future {
-	if mm == 0 {
+	if mm <= 0 {
 		mm = 10
 	} else {
 		mm = mm * 1000 * 1000
 	}
 
 	go func() {
+		// 等待超时时间到之后执行取消操作
 		<-time.After((time.Duration)(mm) * time.Nanosecond)
 		this.Cancel()
 	}()
@@ -120,6 +125,7 @@ func (this *Future) SetTimeout(mm int) *Future {
 }
 
 //GetChan returns a channel than can be used to receive result of Promise
+// 获取future执行结果管道
 func (this *Future) GetChan() <-chan *PromiseResult {
 	c := make(chan *PromiseResult, 1)
 	this.OnComplete(func(v interface{}) {
@@ -134,6 +140,10 @@ func (this *Future) GetChan() <-chan *PromiseResult {
 //If Future is resolved, value and nil will be returned
 //If Future is rejected, nil and error will be returned.
 //If Future is cancelled, nil and CANCELLED error will be returned.
+// 执行该函数会阻塞当前goroutines.
+// 如果Future为resolved，那么返回结果为value和nil
+// 如果Future为rejected，那么返回结果为nil和error
+// 如果Future为cancelled，那么返回结果为nil和CANCELLED
 func (this *Future) Get() (val interface{}, err error) {
 	<-this.final
 	return getFutureReturnVal(this.loadResult())
@@ -142,8 +152,9 @@ func (this *Future) Get() (val interface{}, err error) {
 //GetOrTimeout is similar to Get(), but GetOrTimeout will not block after timeout.
 //If GetOrTimeout returns with a timeout, timeout value will be true in return values.
 //The unit of paramter is millisecond.
+// 设置超时等待
 func (this *Future) GetOrTimeout(mm uint) (val interface{}, err error, timout bool) {
-	if mm == 0 {
+	if mm <= 0 {
 		mm = 10
 	} else {
 		mm = mm * 1000 * 1000
@@ -286,12 +297,14 @@ func (this *Future) Pipe(callbacks ...interface{}) (result *Future, ok bool) {
 
 //result uses Atomic load to return result of the Future
 func (this *Future) loadResult() *PromiseResult {
+	// 获取得到的为*futureVal
 	val := this.loadVal()
 	return val.r
 }
 
 //val uses Atomic load to return state value of the Future
 func (this *Future) loadVal() *futureVal {
+	// 使用atomic.LoadPointer确保数据同步一致性，避免出现脏数据
 	r := atomic.LoadPointer(&this.val)
 	return (*futureVal)(r)
 }

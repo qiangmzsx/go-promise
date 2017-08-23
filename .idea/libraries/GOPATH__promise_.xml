@@ -1,0 +1,51 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;promise&gt;">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../gopkg.in" />
+      <root url="file://$PROJECT_DIR$/../beegofreecache" />
+      <root url="file://$PROJECT_DIR$/../studygo" />
+      <root url="file://$PROJECT_DIR$/../voice" />
+      <root url="file://$PROJECT_DIR$/../voicefay" />
+      <root url="file://$PROJECT_DIR$/../tingdata_old" />
+      <root url="file://$PROJECT_DIR$/../ralforgo" />
+      <root url="file://$PROJECT_DIR$/../voicespider" />
+      <root url="file://$PROJECT_DIR$/../code.google.com" />
+      <root url="file://$PROJECT_DIR$/../github.com" />
+      <root url="file://$PROJECT_DIR$/../golang.org" />
+      <root url="file://$PROJECT_DIR$/../www.baidu.com" />
+      <root url="file://$PROJECT_DIR$/../rabbit" />
+      <root url="file://$PROJECT_DIR$/../voiceplatform" />
+      <root url="file://$PROJECT_DIR$/../gitlab.baidu.com" />
+      <root url="file://$PROJECT_DIR$/../hello" />
+      <root url="file://$PROJECT_DIR$/../tingdata" />
+      <root url="file://$PROJECT_DIR$/../gomitmproxy" />
+      <root url="file://$PROJECT_DIR$/../impack" />
+      <root url="file://$PROJECT_DIR$/../git.oschina.net" />
+    </CLASSES>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../gopkg.in" />
+      <root url="file://$PROJECT_DIR$/../beegofreecache" />
+      <root url="file://$PROJECT_DIR$/../studygo" />
+      <root url="file://$PROJECT_DIR$/../voice" />
+      <root url="file://$PROJECT_DIR$/../voicefay" />
+      <root url="file://$PROJECT_DIR$/../tingdata_old" />
+      <root url="file://$PROJECT_DIR$/../ralforgo" />
+      <root url="file://$PROJECT_DIR$/../voicespider" />
+      <root url="file://$PROJECT_DIR$/../code.google.com" />
+      <root url="file://$PROJECT_DIR$/../github.com" />
+      <root url="file://$PROJECT_DIR$/../golang.org" />
+      <root url="file://$PROJECT_DIR$/../www.baidu.com" />
+      <root url="file://$PROJECT_DIR$/../rabbit" />
+      <root url="file://$PROJECT_DIR$/../voiceplatform" />
+      <root url="file://$PROJECT_DIR$/../gitlab.baidu.com" />
+      <root url="file://$PROJECT_DIR$/../hello" />
+      <root url="file://$PROJECT_DIR$/../tingdata" />
+      <root url="file://$PROJECT_DIR$/../gomitmproxy" />
+      <root url="file://$PROJECT_DIR$/../impack" />
+      <root url="file://$PROJECT_DIR$/../git.oschina.net" />
+    </SOURCES>
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+    </excluded>
+  </library>
+</component>
