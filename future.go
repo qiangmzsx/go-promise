@@ -23,9 +23,13 @@ import (
 type callbackType int
 
 const (
+	// 0,回调成功
 	CALLBACK_DONE callbackType = iota
+	// 1,回调失败
 	CALLBACK_FAIL
+	// 2,回调完成
 	CALLBACK_ALWAYS
+	// 3,回调取消
 	CALLBACK_CANCEL
 )
 
@@ -47,6 +51,7 @@ func (this *pipe) getPipe(isResolved bool) (func(v interface{}) *Future, *Promis
 //Canceller is used to check if the future is cancelled
 //It usually be passed to the future task function
 //for future task function can check if the future is cancelled.
+// 实现结构体有：canceller和Future
 type Canceller interface {
 	IsCancelled() bool
 	Cancel()
@@ -312,6 +317,7 @@ func (this *Future) loadVal() *futureVal {
 //setResult sets the value and final status of Promise, it will only be executed for once
 func (this *Future) setResult(r *PromiseResult) (e error) { //r *PromiseResult) {
 	defer func() {
+		// getError()封装error信息
 		if err := getError(recover()); err != nil {
 			e = err
 			fmt.Println("\nerror in setResult():", err)
@@ -319,7 +325,7 @@ func (this *Future) setResult(r *PromiseResult) (e error) { //r *PromiseResult) 
 	}()
 
 	e = errors.New("Cannot resolve/reject/cancel more than once")
-
+	// 使用cas算法新值替换旧值
 	for {
 		v := this.loadVal()
 		if v.r != nil {
@@ -336,6 +342,7 @@ func (this *Future) setResult(r *PromiseResult) (e error) { //r *PromiseResult) 
 			close(this.final)
 
 			//call callback functions and start the Promise pipeline
+			// 如果有回调函数就会调用回调函数
 			if len(v.dones) > 0 || len(v.fails) > 0 || len(v.always) > 0 || len(v.cancels) > 0 {
 				go func() {
 					execCallback(r, v.dones, v.fails, v.always, v.cancels)
@@ -359,6 +366,7 @@ func (this *Future) setResult(r *PromiseResult) (e error) { //r *PromiseResult) 
 }
 
 //handleOneCallback registers a callback function
+// 这个函数主要的作用就是将回调函数放入到*futureVal的属性dones, fails, always和cancels属性中
 func (this *Future) addCallback(callback interface{}, t callbackType) {
 	if callback == nil {
 		return
@@ -378,6 +386,7 @@ func (this *Future) addCallback(callback interface{}, t callbackType) {
 	for {
 		v := this.loadVal()
 		r := v.r
+		// 如果返回结果还是nil就说明future还没有执行完成，将回调函数加入，否则就执行回调函数
 		if r == nil {
 			newVal := *v
 			switch t {
