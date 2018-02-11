@@ -99,17 +99,18 @@ func (this *Promise) OnCancel(callback func()) *Promise {
 //NewPromise is factory function for Promise
 func NewPromise() *Promise {
 	val := &futureVal{
-		make([]func(v interface{}), 0, 8),
-		make([]func(v interface{}), 0, 8),
-		make([]func(v interface{}), 0, 4),
-		make([]func(), 0, 2),
-		make([]*pipe, 0, 4), nil,
+		dones:   make([]func(v interface{}), 0, 8),
+		fails:   make([]func(v interface{}), 0, 8),
+		always:  make([]func(v interface{}), 0, 4),
+		cancels: make([]func(), 0, 2),
+		pipes:   make([]*pipe, 0, 4),
+		r:       nil,
 	}
 	f := &Promise{
 		&Future{
-			rand.Int(),
-			make(chan struct{}),
-			unsafe.Pointer(val),
+			Id:    rand.Int(),
+			final: make(chan struct{}),
+			val:   unsafe.Pointer(val),
 		},
 	}
 	return f

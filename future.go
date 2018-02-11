@@ -84,7 +84,7 @@ type futureVal struct {
 //Future provides a read-only view of promise,
 //the value is set by using Resolve, Reject and Cancel methods of related Promise
 type Future struct {
-	Id    int //Id can be used as identity of Future
+	Id int //Id can be used as identity of Future
 	// 标识该future是否完成
 	final chan struct{}
 	//val point to futureVal that stores status of future

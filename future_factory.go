@@ -36,20 +36,25 @@ func Start(act interface{}, syncs ...bool) *Future {
 	}
 
 	if action := getAct(pr, act); action != nil {
-		if syncs != nil && len(syncs) > 0 && !syncs[0] {
+		if syncs != nil &&  syncs[0] {
 			//sync call
+			// 同步执行
 			r, err := action()
+			// 执行取消
 			if pr.IsCancelled() {
 				pr.Cancel()
 			} else {
+				// 执行无error，返回结果
 				if err == nil {
 					pr.Resolve(r)
 				} else {
+					// 执行有error返回error
 					pr.Reject(err)
 				}
 			}
 		} else {
 			//async call
+			// 异步执行
 			go func() {
 				r, err := action()
 				if pr.IsCancelled() {
@@ -67,6 +72,7 @@ func Start(act interface{}, syncs ...bool) *Future {
 
 	return pr.Future
 }
+
 
 //Wrap return a Future that presents the wrapped value
 func Wrap(value interface{}) *Future {
